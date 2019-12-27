@@ -86,7 +86,7 @@ export class PluginForHtmlWebpackPluginV4 extends BasePlugin {
           },
         )
 
-        hooks.beforeEmit.tap(`${TAP_KEY_PREFIX}_beforeEmit`, (data) => {
+        hooks.afterTemplateExecution.tap(`${TAP_KEY_PREFIX}_beforeEmit`, (data) => {
           this.process(data)
         })
       },
