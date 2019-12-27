@@ -1,6 +1,5 @@
-import { SyncHook } from 'tapable'
+import * as HTMLWebpackPlugin from 'html-webpack-plugin'
 import { Compiler } from 'webpack'
-import HTMLWebpackPlugin = require('html-webpack-plugin')
 
 import { TAP_KEY_PREFIX } from '../types'
 import { BasePlugin } from './base-plugin'
@@ -20,18 +19,13 @@ interface BeforeEmitData {
   plugin: HTMLWebpackPlugin
 }
 
-interface HTMLWebpackPluginHooks {
-  beforeAssetTagGeneration: SyncHook<BeforeAssetTagGenerationData>
-  beforeEmit: SyncHook<BeforeEmitData>
-}
-
 type CSSStyle = string
 
 export class PluginForHtmlWebpackPluginV4 extends BasePlugin {
   // Using object reference to distinguish styles for multiple files
   private cssStyleMap: Map<HTMLWebpackPlugin, CSSStyle[]> = new Map()
 
-  private prepareCSSStyle(data: BeforeAssetTagGenerationData) {
+  private prepareCSSStyle (data: BeforeAssetTagGenerationData) {
     data.assets.css.forEach((cssLink, index) => {
       if (this.isCurrentFileNeedsToBeInlined(cssLink)) {
         const style = this.getCSSStyle({
@@ -53,7 +47,7 @@ export class PluginForHtmlWebpackPluginV4 extends BasePlugin {
     })
   }
 
-  private process(data: BeforeEmitData) {
+  private process (data: BeforeEmitData) {
     // check if current html needs to be inlined
     if (this.isCurrentFileNeedsToBeInlined(data.outputName)) {
       const cssStyles = this.cssStyleMap.get(data.plugin) || []
@@ -70,24 +64,26 @@ export class PluginForHtmlWebpackPluginV4 extends BasePlugin {
     }
   }
 
-  apply(compiler: Compiler) {
+  apply (compiler: Compiler) {
     compiler.hooks.compilation.tap(
       `${TAP_KEY_PREFIX}_compilation`,
       (compilation) => {
-        const hooks: HTMLWebpackPluginHooks = (HTMLWebpackPlugin as any).getHooks(
+        const hooks: HTMLWebpackPlugin.Hooks = (HTMLWebpackPlugin as any).getHooks(
           compilation,
         )
 
-        hooks.beforeAssetTagGeneration.tap(
+        hooks.beforeAssetTagGeneration.tapAsync(
           `${TAP_KEY_PREFIX}_beforeAssetTagGeneration`,
-          (data) => {
+          (data, callback) => {
             this.prepare(compilation)
             this.prepareCSSStyle(data)
+            callback();
           },
         )
 
-        hooks.afterTemplateExecution.tap(`${TAP_KEY_PREFIX}_beforeEmit`, (data) => {
+        hooks.afterTemplateExecution.tapAsync(`${TAP_KEY_PREFIX}_beforeEmit`, (data, callback) => {
           this.process(data)
+          callback();
         })
       },
     )

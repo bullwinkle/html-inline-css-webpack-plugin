@@ -1,6 +1,6 @@
 {
-  "name": "html-inline-css-webpack-plugin",
-  "version": "1.8.0",
+  "name": "@bullwinkle/html-inline-css-webpack-plugin",
+  "version": "1.8.3",
   "description": "☄️ A webpack plugin for convert external stylesheet to embedded stylesheet, aka document stylesheet",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Runjuu/html-inline-css-webpack-plugin.git"
+    "url": "git://github.com/bullwinkle/html-inline-css-webpack-plugin.git"
   },
   "husky": {
     "hooks": {
@@ -44,9 +44,11 @@
   },
   "homepage": "https://github.com/Runjuu/html-inline-css-webpack-plugin#readme",
   "devDependencies": {
-    "@types/html-webpack-plugin": "^3.2.1",
+    "html-webpack-plugin": "^4.0.0-beta.11",
     "@types/lodash": "^4.14.137",
     "@types/webpack": "^4.4.0",
+    "@types/tapable": "^1.0.4",
+    "tapable": "^1.1.3",
     "husky": "^1.3.1",
     "lint-staged": "^8.1.0",
     "prettier": "^1.15.3",
@@ -55,12 +57,17 @@
     "tslint-eslint-rules": "^5.4.0",
     "tslint-sonarts": "^1.8.0",
     "typescript": "^3.2.2",
-    "webpack": "^4.11.1"
+    "webpack": "^4.11.1",
+    "@types/html-minifier": "^3.5.3",
+    "html-minifier": "^4.0.0"
   },
   "peerDependencies": {
-    "html-webpack-plugin": "^3.0.0"
+    "html-webpack-plugin": "^4.0.0-beta.11"
   },
   "dependencies": {
     "lodash": "^4.17.15"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }
